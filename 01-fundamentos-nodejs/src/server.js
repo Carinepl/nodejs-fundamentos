@@ -6,7 +6,7 @@ const server = http.createServer((req, res) => {
 const {method, url} = req
 if(method == 'GET' && url == '/users') {
   return res
-  .setHeader('Content-type', 'application/json')
+  .setHeader('Content-type', 'application/json')  
   .end(JSON.stringify(users))
 }
 
@@ -17,10 +17,10 @@ if(method == 'POST' && url == '/users') {
     email:'carinelima@email.com'
   })
 
-  return  res.end('Criacao de usuarios')
+  return  res.writeHead((201)).end()
 }
 
-  return res.end('Hello Guys')
+  return res.writeHead(404).end()
 
 })
 
