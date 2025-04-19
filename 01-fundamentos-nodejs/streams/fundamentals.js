@@ -1,25 +1,35 @@
-import { Readable } from 'node:stream'
+import { Readable, Writable, Transform } from 'node:stream'
 
-//stream de leitura
 class OneToHundredStream extends Readable {
-//  contar a partir de um
-index = 1
-//metodo obrigatorio de stream de leitura Readable
+  index = 1
+
   _read() {
-// ++ é o index mais outro numero ate 100
     const i = this.index++
-setTimeout(()=> {
 
-  if (i > 100) {
-    this.push(null)
-  } else {
-    const buf = Buffer.from(String(i))
-
-    this.push(buf)
-  }
-  //tempo de espera 1000 milissegundos
-}, 1000)
+    setTimeout(() => {
+      if (i > 100) {
+        this.push(null)
+      } else {
+        const buf = Buffer.from(String(i))
+        this.push(buf)
+      }
+    }, 1000) 
   }
 }
-//tudo que for gerado nessa stream ler no terminal
-new OneToHundredStream().pipe(process.stdout)
+class InverseNumberStream extends  Transform {
+  _transform(chunk, encoding, callback){
+    const transformed = Number(chunk.toString()) * -1
+    callback(null, Buffer.from(String(transformed)))
+  }
+}
+
+class MultiplyByTenStream extends Writable {
+  _write(chunk, encoding, callback) {
+    console.log(Number(chunk.toString()) * 10)
+    callback()
+  }
+}
+
+new OneToHundredStream()
+.pipe(new  InverseNumberStream())
+.pipe(new MultiplyByTenStream())
